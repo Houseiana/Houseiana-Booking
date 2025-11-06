@@ -59,7 +59,8 @@ export default function VisaPage({ params }: { params: { locale: Locale } }) {
     isArabic ? 'مراجعة كاملة للمستندات' : 'Complete document review',
     isArabic ? 'متابعة حالة الطلب' : 'Application status tracking',
     isArabic ? 'دعم على مدار الساعة' : '24/7 support',
-    isArabic ? 'معدل نجاح 95%' : '95% success rate',
+    isArabic ? 'فريق من الخبراء المحترفين' : 'Team of professional experts',
+    isArabic ? 'خدمة سريعة وموثوقة' : 'Fast and reliable service',
   ];
 
   return (
@@ -193,8 +194,8 @@ export default function VisaPage({ params }: { params: { locale: Locale } }) {
                 />
               </div>
               <div className="absolute -bottom-6 -left-6 rounded-2xl bg-white p-6 shadow-xl">
-                <div className="text-4xl font-bold text-primary">95%</div>
-                <div className="text-gray-600">{isArabic ? 'معدل النجاح' : 'Success Rate'}</div>
+                <div className="text-4xl font-bold text-primary">24/7</div>
+                <div className="text-gray-600">{isArabic ? 'دعم العملاء' : 'Customer Support'}</div>
               </div>
             </div>
           </div>

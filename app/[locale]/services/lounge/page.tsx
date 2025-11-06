@@ -1,139 +1,233 @@
 'use client';
 
 import { Locale } from '@/lib/i18n/config';
-import { getTranslations } from '@/lib/i18n/translations';
-import { Button } from '@/components/ui/Button';
-import { CheckCircle2 } from 'lucide-react';
+import { Crown, Coffee, Wifi, Armchair, Check, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function LoungePage({ params }: { params: { locale: Locale } }) {
-  const translations = getTranslations(params.locale);
-  const t = translations.lounge;
+  const isArabic = params.locale === 'ar';
+
+  const features = [
+    {
+      icon: Crown,
+      title: isArabic ? 'تجربة VIP فاخرة' : 'Luxury VIP Experience',
+      desc: isArabic ? 'استمتع بأرقى وسائل الراحة' : 'Enjoy the finest amenities',
+    },
+    {
+      icon: Coffee,
+      title: isArabic ? 'مأكولات ومشروبات' : 'Food & Beverages',
+      desc: isArabic ? 'قائمة متنوعة من الأطعمة والمشروبات' : 'Diverse menu of food and drinks',
+    },
+    {
+      icon: Wifi,
+      title: isArabic ? 'إنترنت عالي السرعة' : 'High-Speed Internet',
+      desc: isArabic ? 'واي فاي مجاني وسريع' : 'Free and fast WiFi',
+    },
+    {
+      icon: Armchair,
+      title: isArabic ? 'مقاعد مريحة' : 'Comfortable Seating',
+      desc: isArabic ? 'مساحات هادئة ومريحة' : 'Quiet and comfortable spaces',
+    },
+  ];
+
+  const loungeTypes = [
+    {
+      name: isArabic ? 'صالات المطارات الدولية' : 'International Airport Lounges',
+      desc: isArabic ? 'صالات فخمة في أشهر مطارات العالم' : 'Luxurious lounges in the world\'s most famous airports',
+      image: 'https://images.unsplash.com/photo-1583241800698-c2b27beaa00e?w=600&h=400&fit=crop',
+    },
+    {
+      name: isArabic ? 'صالات درجة رجال الأعمال' : 'Business Class Lounges',
+      desc: isArabic ? 'صالات مخصصة لرجال الأعمال' : 'Dedicated business class lounges',
+      image: 'https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=600&h=400&fit=crop',
+    },
+    {
+      name: isArabic ? 'صالات الدرجة الأولى' : 'First Class Lounges',
+      desc: isArabic ? 'تجربة فاخرة للغاية' : 'Ultra-luxurious experience',
+      image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&h=400&fit=crop',
+    },
+  ];
+
+  const benefits = [
+    isArabic ? 'وجبات ومشروبات مجانية' : 'Complimentary food and beverages',
+    isArabic ? 'غرف استحمام وخدمات نظافة' : 'Shower rooms and hygiene services',
+    isArabic ? 'مناطق عمل هادئة' : 'Quiet work areas',
+    isArabic ? 'خدمة واي فاي عالية السرعة' : 'High-speed WiFi service',
+    isArabic ? 'محطات شحن وأجهزة إلكترونية' : 'Charging stations and electronic devices',
+    isArabic ? 'صحف ومجلات دولية' : 'International newspapers and magazines',
+    isArabic ? 'موظفو استقبال محترفون' : 'Professional reception staff',
+    isArabic ? 'أماكن راحة خاصة' : 'Private relaxation areas',
+  ];
 
   return (
     <div className="min-h-screen">
-      {/* Hero */}
-      <section className="bg-gradient-primary py-16 text-white">
-        <div className="container-custom text-center">
-          <h1 className="mb-4 text-4xl font-bold md:text-5xl">{t.title}</h1>
-          <p className="mx-auto max-w-2xl text-lg opacity-90">{t.subtitle}</p>
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-primary via-primary-dark to-secondary py-24 text-white overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-300 rounded-full blur-3xl" />
         </div>
-      </section>
 
-      {/* Amenities */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <h2 className="mb-8 text-center text-3xl font-bold">{t.amenitiesTitle}</h2>
-          <div className="mx-auto max-w-3xl">
-            <div className="grid gap-4 md:grid-cols-2">
-              {t.amenities.map((amenity, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-green-500" />
-                  <span className="text-gray-700">{amenity}</span>
-                </div>
-              ))}
+        <div className="container-custom relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-sm px-6 py-3">
+              <Crown className="h-5 w-5" />
+              <span className="font-semibold">{isArabic ? 'صالات VIP' : 'VIP Lounges'}</span>
+            </div>
+
+            <h1 className="mb-6 text-5xl font-bold leading-tight md:text-6xl lg:text-7xl">
+              {isArabic ? 'صالات VIP الفاخرة في المطارات' : 'Luxury VIP Airport Lounges'}
+            </h1>
+
+            <p className="mb-10 text-xl text-cyan-50 leading-relaxed md:text-2xl">
+              {isArabic
+                ? 'استمتع بتجربة انتظار استثنائية في أرقى صالات VIP حول العالم'
+                : 'Enjoy an exceptional waiting experience in the finest VIP lounges around the world'}
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href={`/${params.locale}/#lounge`}
+                className="group inline-flex items-center justify-center gap-3 rounded-xl bg-white px-8 py-4 text-lg font-semibold text-primary shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+              >
+                <span>{isArabic ? 'احجز صالة VIP' : 'Book VIP Lounge'}</span>
+                <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+              </Link>
+
+              <Link
+                href="https://wa.me/97430424433"
+                target="_blank"
+                className="inline-flex items-center justify-center gap-3 rounded-xl bg-green-500 px-8 py-4 text-lg font-semibold text-white shadow-xl hover:shadow-2xl hover:bg-green-600 transition-all"
+              >
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span>{isArabic ? 'استفسر الآن' : 'Inquire Now'}</span>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Booking Form */}
+      {/* Features */}
+      <section className="section bg-white">
+        <div className="container-custom">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {features.map((feature, index) => (
+              <div key={index} className="group text-center rounded-2xl p-6 transition-all hover:bg-gradient-to-br hover:from-primary/5 hover:to-secondary/5">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-secondary text-white group-hover:scale-110 transition-transform">
+                  <feature.icon className="h-8 w-8" />
+                </div>
+                <h3 className="mb-2 text-xl font-bold text-gray-900">{feature.title}</h3>
+                <p className="text-gray-600">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Lounge Types */}
       <section className="section bg-gray-50">
         <div className="container-custom">
-          <div className="mx-auto max-w-2xl rounded-2xl bg-white p-8 shadow-soft">
-            <h2 className="mb-6 text-2xl font-bold text-center">
-              {params.locale === 'ar' ? 'احجز صالة VIP' : 'Book VIP Lounge Access'}
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-4xl font-bold text-gray-900">
+              {isArabic ? 'أنواع الصالات' : 'Lounge Types'}
             </h2>
+            <p className="text-lg text-gray-600">
+              {isArabic
+                ? 'وصول إلى أفضل صالات VIP في المطارات العالمية'
+                : 'Access to the best VIP lounges in global airports'}
+            </p>
+          </div>
 
-            <form className="space-y-4">
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  {t.selectAirport}
-                </label>
-                <select className="input">
-                  <option value="">Select Airport & Lounge</option>
-                  <optgroup label="GCC Airports">
-                    <option value="DOH-AL-MAHA">DOH - Hamad International Airport - Al Maha Lounge</option>
-                    <option value="DOH-AL-MOURJAN">DOH - Hamad International Airport - Al Mourjan Lounge</option>
-                    <option value="DXB-EMIRATES">DXB - Dubai International Airport - Emirates Lounge</option>
-                    <option value="DXB-MARHABA">DXB - Dubai International Airport - Marhaba Lounge</option>
-                    <option value="AUH-ETIHAD">AUH - Abu Dhabi International Airport - Etihad Lounge</option>
-                    <option value="JED-ALFURSAN">JED - King Abdulaziz Airport, Jeddah - AlFursan Lounge</option>
-                    <option value="RUH-ALFURSAN">RUH - King Khalid Airport, Riyadh - AlFursan Lounge</option>
-                    <option value="KWI-ALWAHA">KWI - Kuwait International Airport - Al Waha Lounge</option>
-                    <option value="BAH-FALCON">BAH - Bahrain International Airport - Falcon Gold Lounge</option>
-                  </optgroup>
-                  <optgroup label="Middle East">
-                    <option value="IST-TURKISH">IST - Istanbul Airport - Turkish Airlines Lounge</option>
-                    <option value="SAW-PRIMECLASS">SAW - Sabiha Gökçen Airport - PrimeClass Lounge</option>
-                    <option value="CAI-AHLAN">CAI - Cairo International Airport - Ahlan Lounge</option>
-                    <option value="AMM-CROWN">AMM - Queen Alia Airport - Crown Lounge</option>
-                  </optgroup>
-                  <optgroup label="Europe">
-                    <option value="LHR-PLAZA">LHR - London Heathrow - Plaza Premium Lounge</option>
-                    <option value="CDG-STAR">CDG - Paris Charles de Gaulle - Star Alliance Lounge</option>
-                    <option value="FRA-LUFTHANSA">FRA - Frankfurt Airport - Lufthansa Lounge</option>
-                    <option value="AMS-KLM">AMS - Amsterdam Schiphol - KLM Crown Lounge</option>
-                  </optgroup>
-                  <optgroup label="Asia">
-                    <option value="BKK-MIRACLE">BKK - Suvarnabhumi Airport - Miracle Lounge</option>
-                    <option value="SIN-SATS">SIN - Singapore Changi - SATS Premier Lounge</option>
-                    <option value="KUL-PLAZA">KUL - Kuala Lumpur International - Plaza Premium Lounge</option>
-                    <option value="HKG-PLAZA">HKG - Hong Kong International - Plaza Premium Lounge</option>
-                  </optgroup>
-                  <optgroup label="North America">
-                    <option value="JFK-DELTA">JFK - New York Kennedy - Delta Sky Club</option>
-                    <option value="LAX-UNITED">LAX - Los Angeles International - United Club</option>
-                    <option value="ORD-ADMIRALS">ORD - Chicago O&apos;Hare - Admirals Club</option>
-                  </optgroup>
-                </select>
+          <div className="grid gap-8 md:grid-cols-3">
+            {loungeTypes.map((lounge, index) => (
+              <div key={index} className="group overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all">
+                <div className="relative h-48">
+                  <Image src={lounge.image} alt={lounge.name} fill className="object-cover transition-transform duration-300 group-hover:scale-110" />
+                </div>
+                <div className="p-6">
+                  <h3 className="mb-2 text-xl font-bold text-gray-900">{lounge.name}</h3>
+                  <p className="text-gray-600">{lounge.desc}</p>
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="section bg-white">
+        <div className="container-custom">
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            <div>
+              <h2 className="mb-6 text-4xl font-bold text-gray-900">
+                {isArabic ? 'مزايا صالات VIP' : 'VIP Lounge Benefits'}
+              </h2>
+              <p className="mb-8 text-lg text-gray-600 leading-relaxed">
+                {isArabic
+                  ? 'استرخِ واستمتع بوقتك في المطار مع جميع المرافق والخدمات الفاخرة'
+                  : 'Relax and enjoy your time at the airport with all the luxurious facilities and services'}
+              </p>
 
               <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    {params.locale === 'ar' ? 'التاريخ' : 'Date'}
-                  </label>
-                  <input type="date" className="input" />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    {t.timeWindow}
-                  </label>
-                  <select className="input">
-                    <option>2 Hours</option>
-                    <option>3 Hours</option>
-                    <option>4 Hours</option>
-                    <option>6 Hours</option>
-                  </select>
-                </div>
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-green-500 text-white mt-1">
+                      <Check className="h-4 w-4" />
+                    </div>
+                    <p className="text-gray-700">{benefit}</p>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  {params.locale === 'ar' ? 'عدد الضيوف' : 'Number of Guests'}
-                </label>
-                <input type="number" min="1" defaultValue="1" className="input" />
+            <div className="relative">
+              <div className="relative h-[500px] overflow-hidden rounded-3xl shadow-2xl">
+                <Image
+                  src="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=1000&fit=crop"
+                  alt="VIP Lounge"
+                  fill
+                  className="object-cover"
+                />
               </div>
-
-              <div className="rounded-lg bg-primary-light p-4">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-700">
-                    {params.locale === 'ar' ? 'السعر الإجمالي' : 'Total Price'}
-                  </span>
-                  <span className="text-2xl font-bold text-primary">
-                    150 <span className="text-sm">QAR</span>
-                  </span>
-                </div>
-                <p className="mt-1 text-sm text-gray-600">
-                  {params.locale === 'ar' ? 'للشخص الواحد' : 'per person'}
-                </p>
+              <div className="absolute -bottom-6 -left-6 rounded-2xl bg-white p-6 shadow-xl">
+                <div className="text-4xl font-bold text-primary">200+</div>
+                <div className="text-gray-600">{isArabic ? 'صالة VIP' : 'VIP Lounges'}</div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <Button variant="primary" size="lg" className="w-full">
-                {params.locale === 'ar' ? 'احجز الآن' : 'Book Now'}
-              </Button>
-            </form>
+      {/* CTA */}
+      <section className="section bg-gradient-to-br from-primary via-primary-dark to-secondary text-white">
+        <div className="container-custom text-center">
+          <h2 className="mb-6 text-4xl font-bold md:text-5xl">
+            {isArabic ? 'جاهز لحجز صالة VIP؟' : 'Ready to Book a VIP Lounge?'}
+          </h2>
+          <p className="mb-10 text-xl text-cyan-50 mx-auto max-w-2xl">
+            {isArabic
+              ? 'اجعل انتظارك في المطار تجربة ممتعة ومريحة'
+              : 'Make your airport wait a pleasant and comfortable experience'}
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href={`/${params.locale}/#lounge`}
+              className="group inline-flex items-center justify-center gap-3 rounded-xl bg-white px-10 py-5 text-lg font-semibold text-primary shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+            >
+              <Crown className="h-6 w-6" />
+              <span>{isArabic ? 'احجز الآن' : 'Book Now'}</span>
+            </Link>
+
+            <Link
+              href={`/${params.locale}/contact`}
+              className="inline-flex items-center justify-center gap-3 rounded-xl border-2 border-white bg-transparent px-10 py-5 text-lg font-semibold text-white hover:bg-white hover:text-primary transition-all"
+            >
+              <span>{isArabic ? 'اتصل بنا' : 'Contact Us'}</span>
+            </Link>
           </div>
         </div>
       </section>
