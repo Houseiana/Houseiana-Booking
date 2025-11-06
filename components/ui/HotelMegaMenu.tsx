@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar, Search } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { RoomGuestPicker } from './RoomGuestPicker';
 import { CitySelector } from './CitySelector';
-import { useRouter } from 'next/navigation';
+import { SuccessMessage } from './SuccessMessage';
 
 interface HotelMegaMenuProps {
   locale: 'en' | 'ar';
@@ -12,7 +12,6 @@ interface HotelMegaMenuProps {
 }
 
 export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
-  const router = useRouter();
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+974');
   const [whatsapp, setWhatsapp] = useState('');
@@ -23,6 +22,28 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [rooms, setRooms] = useState([{ adults: 2, children: 0 }]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Handle name input - only allow letters and spaces
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only letters (English and Arabic) and spaces
+    const regex = /^[a-zA-Z\u0600-\u06FF\s]*$/;
+    if (regex.test(value)) {
+      setName(value);
+    }
+  };
+
+  // Handle WhatsApp input - only allow numbers
+  const handleWhatsAppChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers
+    const regex = /^[0-9]*$/;
+    if (regex.test(value)) {
+      setWhatsapp(value);
+    }
+  };
 
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
@@ -45,7 +66,8 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
     checkIn: locale === 'ar' ? 'تسجيل الوصول' : 'Check-in',
     checkOut: locale === 'ar' ? 'تسجيل المغادرة' : 'Check-out',
     roomsGuests: locale === 'ar' ? 'الغرف والضيوف' : 'Rooms & Guests',
-    searchHotels: locale === 'ar' ? 'البحث عن الفنادق' : 'Search Hotels',
+    submitRequest: locale === 'ar' ? 'إرسال الطلب' : 'Submit Request',
+    submitting: locale === 'ar' ? 'جاري الإرسال...' : 'Submitting...',
   };
 
   const locations = [
@@ -110,28 +132,59 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
     { code: '+34', country: 'Spain', flag: '🇪🇸' },
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate to hotels page with search params
-    const fullWhatsapp = `${countryCode}${whatsapp}`;
-    const params = new URLSearchParams({
-      name,
-      whatsapp: fullWhatsapp,
-      destination,
-      ...(hotelType && { hotelType }),
-      ...(location && { location }),
-      ...(amenities.length > 0 && { amenities: amenities.join(',') }),
-      checkIn,
-      checkOut,
-      rooms: JSON.stringify(rooms),
-    });
-    router.push(`/${locale}/hotels?${params.toString()}`);
-    onClose?.();
+
+    if (!name || !whatsapp || !destination || !checkIn || !checkOut) {
+      return; // Form validation will show browser errors
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/send-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'hotel',
+          name,
+          whatsapp: `${countryCode}${whatsapp}`,
+          destination,
+          hotelType: hotelType || 'Any Type',
+          location: location || 'Any Location',
+          amenities: amenities.length > 0 ? amenities.join(', ') : 'None',
+          checkIn,
+          checkOut,
+          rooms: JSON.stringify(rooms),
+        }),
+      });
+
+      if (response.ok) {
+        setShowSuccess(true);
+        // Reset form
+        setName('');
+        setWhatsapp('');
+        setDestination('');
+        setHotelType('');
+        setLocation('');
+        setAmenities([]);
+        setCheckIn('');
+        setCheckOut('');
+        setRooms([{ adults: 2, children: 0 }]);
+      } else {
+        alert(locale === 'ar' ? 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.' : 'Failed to submit. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert(locale === 'ar' ? 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.' : 'Failed to submit. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="w-full max-w-4xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-2xl border border-gray-100">
-      <form onSubmit={handleSearch} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="mb-6 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">{t.hotelSearch}</h3>
           <p className="text-sm text-gray-600">
@@ -144,11 +197,12 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
           <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">1</span>
             {t.fullName}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleNameChange}
             className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
             placeholder={locale === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
             required
@@ -160,6 +214,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
           <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">2</span>
             {t.whatsapp}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <div className="flex gap-2">
             <select
@@ -176,7 +231,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
             <input
               type="tel"
               value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
+              onChange={handleWhatsAppChange}
               placeholder="30424433"
               className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
               required
@@ -189,6 +244,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
             <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
               <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">3</span>
               {t.destination}
+              <span className="text-red-600 ml-1">*</span>
             </label>
             <CitySelector
               value={destination}
@@ -270,6 +326,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
                 <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">7</span>
                 <Calendar size={16} className="text-primary" />
                 {t.checkIn}
+                <span className="text-red-600 ml-1">*</span>
               </label>
               <input
                 type="date"
@@ -285,6 +342,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
                 <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">8</span>
                 <Calendar size={16} className="text-primary" />
                 {t.checkOut}
+                <span className="text-red-600 ml-1">*</span>
               </label>
               <input
                 type="date"
@@ -306,15 +364,26 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
             <RoomGuestPicker value={rooms} onChange={setRooms} locale={locale} />
           </div>
 
-        {/* Search Button */}
+        {/* Submit Button */}
         <button
           type="submit"
-          className="btn-primary flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200"
+          disabled={isSubmitting}
+          className="btn-primary flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Search size={22} />
-          {t.searchHotels}
+          {isSubmitting ? t.submitting : t.submitRequest}
         </button>
       </form>
+
+      {/* Success Message */}
+      {showSuccess && (
+        <SuccessMessage
+          locale={locale}
+          onClose={() => {
+            setShowSuccess(false);
+            onClose?.();
+          }}
+        />
+      )}
     </div>
   );
 }

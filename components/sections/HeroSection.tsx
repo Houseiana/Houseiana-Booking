@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Hotel, Plane, Users, FileText, Sparkles, TrendingUp, Shield, Award } from 'lucide-react';
+import { Hotel, Plane, Users, FileText, Sparkles, TrendingUp, Shield } from 'lucide-react';
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton';
 import { useState, useEffect } from 'react';
 import { HotelMegaMenu } from '@/components/ui/HotelMegaMenu';
@@ -150,24 +150,6 @@ export function HeroSection({ translations, locale = 'en' }: HeroSectionProps) {
 
             {/* Trust Indicators */}
             <div className="flex flex-wrap items-center justify-center gap-8 mb-12 animate-fade-in-delayed">
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400 drop-shadow-lg" />
-                  ))}
-                </div>
-                <span className="text-sm font-semibold text-white">
-                  {translations.hero.reviewCount}
-                </span>
-              </div>
-              <div className="h-6 w-px bg-white/30" />
-              <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-yellow-400" />
-                <span className="text-sm font-semibold text-white">
-                  {locale === 'ar' ? 'حائز على جوائز' : 'Award Winning'}
-                </span>
-              </div>
-              <div className="h-6 w-px bg-white/30" />
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-green-400" />
                 <span className="text-sm font-semibold text-white">

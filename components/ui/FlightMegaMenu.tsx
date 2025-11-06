@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Plane, Calendar, Users, Search, Plus, Trash2, ArrowRight } from 'lucide-react';
+import { Plane, Calendar, Users, Plus, Trash2, ArrowRight } from 'lucide-react';
 import { AirportSelector } from './AirportSelector';
-import { useRouter } from 'next/navigation';
+import { SuccessMessage } from './SuccessMessage';
 
 interface FlightMegaMenuProps {
   locale: 'en' | 'ar';
@@ -17,10 +17,11 @@ interface FlightLeg {
 }
 
 export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
-  const router = useRouter();
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+974');
   const [whatsapp, setWhatsapp] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [departureDate, setDepartureDate] = useState('');
@@ -34,6 +35,26 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
     { from: '', to: '', date: '' },
     { from: '', to: '', date: '' },
   ]);
+
+  // Handle name input - only allow letters and spaces
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only letters (English and Arabic) and spaces
+    const regex = /^[a-zA-Z\u0600-\u06FF\s]*$/;
+    if (regex.test(value)) {
+      setName(value);
+    }
+  };
+
+  // Handle WhatsApp input - only allow numbers
+  const handleWhatsAppChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers
+    const regex = /^[0-9]*$/;
+    if (regex.test(value)) {
+      setWhatsapp(value);
+    }
+  };
 
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
@@ -60,6 +81,8 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
     business: locale === 'ar' ? 'درجة الأعمال' : 'Business',
     first: locale === 'ar' ? 'الدرجة الأولى' : 'First Class',
     searchFlights: locale === 'ar' ? 'البحث عن الرحلات' : 'Search Flights',
+    submitRequest: locale === 'ar' ? 'إرسال الطلب' : 'Submit Request',
+    submitting: locale === 'ar' ? 'جاري الإرسال...' : 'Submitting...',
     optional: locale === 'ar' ? '(اختياري)' : '(Optional)',
     flightType: locale === 'ar' ? 'نوع الرحلة' : 'Flight Type',
     priorities: locale === 'ar' ? 'الأولويات' : 'Priorities',
@@ -130,45 +153,85 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
     setMultiCityLegs(updatedLegs);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate to flights page with search params
-    const fullWhatsapp = `${countryCode}${whatsapp}`;
 
-    if (flightType === 'multiDestination') {
-      const params = new URLSearchParams({
-        name,
-        whatsapp: fullWhatsapp,
-        flightType,
-        ...(priorities.length > 0 && { priorities: priorities.join(',') }),
-        cabin,
-        adults: adults.toString(),
-        children: children.toString(),
-        multiCity: JSON.stringify(multiCityLegs),
-      });
-      router.push(`/${locale}/flights?${params.toString()}`);
-    } else {
-      const params = new URLSearchParams({
-        name,
-        whatsapp: fullWhatsapp,
-        origin,
-        destination,
-        departureDate,
-        ...(returnDate && { returnDate }),
-        flightType,
-        ...(priorities.length > 0 && { priorities: priorities.join(',') }),
-        cabin,
-        adults: adults.toString(),
-        children: children.toString(),
-      });
-      router.push(`/${locale}/flights?${params.toString()}`);
+    // Validate required fields
+    if (!name || !whatsapp) {
+      return;
     }
-    onClose?.();
+
+    // Validate based on flight type
+    if (flightType === 'multiDestination') {
+      const allLegsValid = multiCityLegs.every(leg => leg.from && leg.to && leg.date);
+      if (!allLegsValid) return;
+    } else {
+      if (!origin || !destination || !departureDate) return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Build route string
+      let routeString = '';
+      if (flightType === 'multiDestination') {
+        routeString = multiCityLegs.map((leg, i) =>
+          `${i + 1}. ${leg.from} → ${leg.to} (${leg.date})`
+        ).join(', ');
+      } else {
+        routeString = `${origin} → ${destination}`;
+      }
+
+      const response = await fetch('/api/send-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'flight',
+          name,
+          whatsapp: `${countryCode}${whatsapp}`,
+          flightType: flightTypes.find(ft => ft.value === flightType)?.label || flightType,
+          priorities: priorities.length > 0 ? priorities.map(p => prioritiesList.find(pr => pr.value === p)?.label).join(', ') : 'None',
+          route: routeString,
+          departureDate: flightType !== 'multiDestination' ? departureDate : undefined,
+          returnDate: returnDate || undefined,
+          cabin: cabin === 'economy' ? t.economy : cabin === 'premiumEconomy' ? t.premiumEconomy : cabin === 'business' ? t.business : t.first,
+          adults,
+          children,
+        }),
+      });
+
+      if (response.ok) {
+        setShowSuccess(true);
+        // Reset form
+        setName('');
+        setWhatsapp('');
+        setOrigin('');
+        setDestination('');
+        setDepartureDate('');
+        setReturnDate('');
+        setCabin('economy');
+        setAdults(1);
+        setChildren(0);
+        setFlightType('roundTrip');
+        setPriorities([]);
+        setMultiCityLegs([
+          { from: '', to: '', date: '' },
+          { from: '', to: '', date: '' },
+        ]);
+      } else {
+        alert(locale === 'ar' ? 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.' : 'Failed to submit. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert(locale === 'ar' ? 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.' : 'Failed to submit. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="w-full max-w-5xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-6 shadow-2xl border border-gray-100 max-h-[85vh] overflow-y-auto">
-      <form onSubmit={handleSearch} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="mb-4 text-center">
           <h3 className="text-xl font-bold text-gray-900 mb-1">{t.flightSearch}</h3>
           <p className="text-xs text-gray-600">
@@ -181,11 +244,12 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
           <label className="mb-1.5 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">1</span>
             {t.fullName}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleNameChange}
             className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400 text-sm"
             placeholder={locale === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
             required
@@ -197,6 +261,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
           <label className="mb-1.5 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">2</span>
             {t.whatsapp}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <div className="flex gap-2">
             <select
@@ -213,7 +278,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
             <input
               type="tel"
               value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
+              onChange={handleWhatsAppChange}
               placeholder="30424433"
               className="flex-1 px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400 text-sm"
               required
@@ -366,6 +431,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
                     <Plane size={14} className="text-primary" />
                     {t.origin}
+                    <span className="text-red-600 ml-1">*</span>
                   </label>
                   <AirportSelector
                     value={origin}
@@ -380,6 +446,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">6</span>
                     <Plane size={14} className="rotate-90 text-primary" />
                     {t.destination}
+                    <span className="text-red-600 ml-1">*</span>
                   </label>
                   <AirportSelector
                     value={destination}
@@ -401,6 +468,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">7</span>
                 <Calendar size={14} className="text-primary" />
                 {t.departureDate}
+                <span className="text-red-600 ml-1">*</span>
               </label>
               <input
                 type="date"
@@ -480,15 +548,26 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
           </div>
         </div>
 
-        {/* Search Button */}
+        {/* Submit Button */}
         <button
           type="submit"
-          className="btn-primary flex w-full items-center justify-center gap-2 py-3 text-base font-bold shadow-lg hover:shadow-xl transform hover:scale-[1.01] transition-all duration-200"
+          disabled={isSubmitting}
+          className="btn-primary flex w-full items-center justify-center gap-2 py-3 text-base font-bold shadow-lg hover:shadow-xl transform hover:scale-[1.01] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Search size={18} />
-          {t.searchFlights}
+          {isSubmitting ? t.submitting : t.submitRequest}
         </button>
       </form>
+
+      {/* Success Message */}
+      {showSuccess && (
+        <SuccessMessage
+          locale={locale}
+          onClose={() => {
+            setShowSuccess(false);
+            onClose?.();
+          }}
+        />
+      )}
     </div>
   );
 }

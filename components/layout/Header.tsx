@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, User, MessageCircle } from 'lucide-react';
+import { Menu, X, MessageCircle } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { Locale } from '@/lib/i18n/config';
 import { HouseianaLogo } from '@/components/ui/HouseianaLogo';
@@ -18,7 +18,6 @@ interface HeaderProps {
       visa: string;
       about: string;
       contact: string;
-      account: string;
     };
   };
 }
@@ -112,13 +111,6 @@ export function Header({ locale, translations }: HeaderProps) {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href={`/${locale}/account`}
-              className="flex items-center gap-2 rounded-lg border border-primary bg-primary px-4 py-2 text-sm font-medium text-white transition-all hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <User className="h-4 w-4" />
-              <span>{translations.nav.account}</span>
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -161,14 +153,6 @@ export function Header({ locale, translations }: HeaderProps) {
                   {item.label}
                 </Link>
               ))}
-              <Link
-                href={`/${locale}/account`}
-                className="mt-2 flex items-center gap-2 rounded-lg border border-primary bg-primary px-4 py-3 font-medium text-white"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <User className="h-5 w-5" />
-                <span>{translations.nav.account}</span>
-              </Link>
             </div>
           </nav>
         </div>

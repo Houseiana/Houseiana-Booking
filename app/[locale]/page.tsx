@@ -3,9 +3,8 @@
 import { Locale } from '@/lib/i18n/config';
 import { getTranslations } from '@/lib/i18n/translations';
 import { HeroSection } from '@/components/sections/HeroSection';
-import { FeaturedDestinations } from '@/components/sections/FeaturedDestinations';
+import { ServiceShowcase } from '@/components/sections/ServiceShowcase';
 import { WhyUsSection } from '@/components/sections/WhyUsSection';
-import { SpecialOffers } from '@/components/sections/SpecialOffers';
 import Link from 'next/link';
 
 export default function HomePage({ params }: { params: { locale: Locale } }) {
@@ -14,14 +13,7 @@ export default function HomePage({ params }: { params: { locale: Locale } }) {
   return (
     <>
       <HeroSection translations={translations} locale={params.locale} />
-      <FeaturedDestinations
-        title={params.locale === 'ar' ? 'الوجهات الشهيرة' : 'Popular Destinations'}
-        locale={params.locale}
-      />
-      <SpecialOffers
-        title={params.locale === 'ar' ? 'عروض خاصة' : 'Special Offers'}
-        locale={params.locale}
-      />
+      <ServiceShowcase locale={params.locale} />
       <WhyUsSection translations={translations} />
 
       {/* How It Works Section */}

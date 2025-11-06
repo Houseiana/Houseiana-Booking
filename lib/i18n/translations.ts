@@ -12,7 +12,6 @@ export const en = {
     visa: 'Visa Assistance',
     about: 'About',
     contact: 'Contact',
-    account: 'My Account',
   },
 
   // Hero Section
@@ -21,7 +20,7 @@ export const en = {
     subtitle: 'Hotels, airport lounges, meet & assist, flights, and visa help — all in one trusted place.',
     searchButton: 'Search & Book',
     whatsappButton: 'WhatsApp Concierge',
-    reviewCount: '12,000+ Happy Travelers',
+    reviewCount: '',
   },
 
   // Search
@@ -173,7 +172,6 @@ export const ar: Translations = {
     visa: 'تأشيرات',
     about: 'من نحن',
     contact: 'تواصل معنا',
-    account: 'حسابي',
   },
 
   // Hero Section
@@ -182,7 +180,7 @@ export const ar: Translations = {
     subtitle: 'فنادق، صالات كبار الشخصيات، خدمات الاستقبال والمساعدة، رحلات الطيران، وتأشيرات — كل ذلك في مكان واحد موثوق.',
     searchButton: 'ابحث واحجز',
     whatsappButton: 'واتساب الكونسيرج',
-    reviewCount: 'أكثر من 12,000 مسافر سعيد',
+    reviewCount: '',
   },
 
   // Search

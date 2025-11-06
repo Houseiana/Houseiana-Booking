@@ -1,146 +1,250 @@
 'use client';
 
 import { Locale } from '@/lib/i18n/config';
-import { getTranslations } from '@/lib/i18n/translations';
-import { HotelCard } from '@/components/ui/HotelCard';
-import { SearchTabs } from '@/components/ui/SearchTabs';
+import { Hotel, Star, Check, Award, Shield, Clock, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HotelsPage({ params }: { params: { locale: Locale } }) {
-  const translations = getTranslations(params.locale);
+  const isArabic = params.locale === 'ar';
 
-  // Sample hotel data
-  const sampleHotels = [
+  const features = [
     {
-      id: '1',
-      name: 'Grand Seaview Istanbul Hotel',
-      image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop',
-      location: 'Istanbul, Turkey',
-      stars: 5,
-      price: 420,
-      currency: 'QAR',
-      freeCancel: true,
-      rating: 4.8,
-      reviewCount: 342,
+      icon: Star,
+      title: isArabic ? 'أفضل الأسعار مضمونة' : 'Best Prices Guaranteed',
+      desc: isArabic ? 'نوفر لك أفضل الأسعار في السوق' : 'We offer you the best prices in the market',
     },
     {
-      id: '2',
-      name: 'Luxury Doha Business Hotel',
-      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&h=600&fit=crop',
-      location: 'Doha, Qatar',
-      stars: 5,
-      price: 550,
-      currency: 'QAR',
-      freeCancel: true,
-      rating: 4.9,
-      reviewCount: 528,
+      icon: Shield,
+      title: isArabic ? 'حجز آمن 100%' : '100% Secure Booking',
+      desc: isArabic ? 'حجوزاتك محمية ومضمونة' : 'Your bookings are protected and guaranteed',
     },
     {
-      id: '3',
-      name: 'Coastal Resort Jeddah',
-      image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop',
-      location: 'Jeddah, Saudi Arabia',
-      stars: 4,
-      price: 380,
-      currency: 'QAR',
-      freeCancel: false,
-      rating: 4.6,
-      reviewCount: 213,
+      icon: Clock,
+      title: isArabic ? 'دعم على مدار الساعة' : '24/7 Support',
+      desc: isArabic ? 'فريقنا متاح دائماً لمساعدتك' : 'Our team is always available to help you',
     },
     {
-      id: '4',
-      name: 'Downtown Dubai Premium',
-      image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=600&fit=crop',
-      location: 'Dubai, UAE',
-      stars: 5,
-      price: 650,
-      currency: 'QAR',
-      freeCancel: true,
-      rating: 4.7,
-      reviewCount: 489,
-    },
-    {
-      id: '5',
-      name: 'Paris City Center Hotel',
-      image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop',
-      location: 'Paris, France',
-      stars: 4,
-      price: 890,
-      currency: 'QAR',
-      freeCancel: true,
-      rating: 4.5,
-      reviewCount: 672,
-    },
-    {
-      id: '6',
-      name: 'London Westminster Suites',
-      image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&h=600&fit=crop',
-      location: 'London, UK',
-      stars: 5,
-      price: 950,
-      currency: 'QAR',
-      freeCancel: true,
-      rating: 4.8,
-      reviewCount: 791,
+      icon: Award,
+      title: isArabic ? 'خدمة متميزة' : 'Premium Service',
+      desc: isArabic ? 'تجربة حجز استثنائية' : 'Exceptional booking experience',
     },
   ];
 
+  const destinations = [
+    {
+      name: isArabic ? 'دبي، الإمارات' : 'Dubai, UAE',
+      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop',
+      hotels: '500+',
+    },
+    {
+      name: isArabic ? 'إسطنبول، تركيا' : 'Istanbul, Turkey',
+      image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop',
+      hotels: '300+',
+    },
+    {
+      name: isArabic ? 'باريس، فرنسا' : 'Paris, France',
+      image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop',
+      hotels: '400+',
+    },
+    {
+      name: isArabic ? 'لندن، بريطانيا' : 'London, UK',
+      image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop',
+      hotels: '350+',
+    },
+  ];
+
+  const benefits = [
+    isArabic ? 'إلغاء مجاني على معظم الحجوزات' : 'Free cancellation on most bookings',
+    isArabic ? 'لا توجد رسوم خفية' : 'No hidden fees',
+    isArabic ? 'تأكيد فوري' : 'Instant confirmation',
+    isArabic ? 'أكثر من 500,000 فندق حول العالم' : 'Over 500,000 hotels worldwide',
+    isArabic ? 'دعم على مدار الساعة' : '24/7 customer support',
+    isArabic ? 'خدمة حجز احترافية' : 'Professional booking service',
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Search Section */}
-      <section className="bg-white py-8 shadow-sm">
-        <div className="container-custom">
-          <SearchTabs translations={translations.search} locale={params.locale} />
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-primary via-primary-dark to-secondary py-24 text-white overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-300 rounded-full blur-3xl" />
+        </div>
+
+        <div className="container-custom relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-sm px-6 py-3">
+              <Hotel className="h-5 w-5" />
+              <span className="font-semibold">{isArabic ? 'حجز الفنادق' : 'Hotel Booking'}</span>
+            </div>
+
+            <h1 className="mb-6 text-5xl font-bold leading-tight md:text-6xl lg:text-7xl">
+              {isArabic ? 'ابحث عن فندقك المثالي' : 'Find Your Perfect Hotel'}
+            </h1>
+
+            <p className="mb-10 text-xl text-cyan-50 leading-relaxed md:text-2xl">
+              {isArabic
+                ? 'أكثر من 500,000 فندق حول العالم بأفضل الأسعار مع خدمة استثنائية على مدار الساعة'
+                : 'Over 500,000 hotels worldwide at the best prices with exceptional 24/7 service'}
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href={`/${params.locale}/#hotels`}
+                className="group inline-flex items-center justify-center gap-3 rounded-xl bg-white px-8 py-4 text-lg font-semibold text-primary shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+              >
+                <span>{isArabic ? 'ابدأ الحجز الآن' : 'Start Booking Now'}</span>
+                <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+              </Link>
+
+              <Link
+                href="https://wa.me/97430424433"
+                target="_blank"
+                className="inline-flex items-center justify-center gap-3 rounded-xl bg-green-500 px-8 py-4 text-lg font-semibold text-white shadow-xl hover:shadow-2xl hover:bg-green-600 transition-all"
+              >
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span>{isArabic ? 'تحدث معنا' : 'Chat with Us'}</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Results Section */}
-      <section className="section">
+      {/* Features Section */}
+      <section className="section bg-white">
         <div className="container-custom">
-          <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                {params.locale === 'ar' ? 'الفنادق المتاحة' : 'Available Hotels'}
-              </h1>
-              <p className="mt-2 text-gray-600">
-                {params.locale === 'ar'
-                  ? `${sampleHotels.length} فندق متاح`
-                  : `${sampleHotels.length} hotels found`}
-              </p>
-            </div>
-
-            {/* Filters Button */}
-            <button className="btn btn-secondary">
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="group text-center rounded-2xl p-6 transition-all hover:bg-gradient-to-br hover:from-primary/5 hover:to-secondary/5"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                />
-              </svg>
-              <span>{params.locale === 'ar' ? 'فلاتر' : 'Filters'}</span>
-            </button>
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-secondary text-white group-hover:scale-110 transition-transform">
+                  <feature.icon className="h-8 w-8" />
+                </div>
+                <h3 className="mb-2 text-xl font-bold text-gray-900">{feature.title}</h3>
+                <p className="text-gray-600">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Destinations */}
+      <section className="section bg-gray-50">
+        <div className="container-custom">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-4xl font-bold text-gray-900">
+              {isArabic ? 'وجهات شهيرة' : 'Popular Destinations'}
+            </h2>
+            <p className="text-lg text-gray-600">
+              {isArabic
+                ? 'اكتشف أفضل الفنادق في أشهر المدن حول العالم'
+                : 'Discover the best hotels in the most popular cities worldwide'}
+            </p>
           </div>
 
-          {/* Hotel Grid */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {sampleHotels.map((hotel) => (
-              <HotelCard
-                key={hotel.id}
-                {...hotel}
-                translations={{
-                  from: translations.common.from,
-                  perNight: translations.common.perNight,
-                  viewDetails: translations.common.viewDetails,
-                  freeCancel: translations.common.freeCancel,
-                }}
-              />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {destinations.map((dest, index) => (
+              <div
+                key={index}
+                className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
+              >
+                <div className="relative h-64">
+                  <Image
+                    src={dest.image}
+                    alt={dest.name}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                  <h3 className="mb-2 text-2xl font-bold">{dest.name}</h3>
+                  <p className="text-cyan-200">{dest.hotels} {isArabic ? 'فندق' : 'Hotels'}</p>
+                </div>
+              </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="section bg-white">
+        <div className="container-custom">
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            <div>
+              <h2 className="mb-6 text-4xl font-bold text-gray-900">
+                {isArabic ? 'لماذا تحجز معنا؟' : 'Why Book With Us?'}
+              </h2>
+              <p className="mb-8 text-lg text-gray-600 leading-relaxed">
+                {isArabic
+                  ? 'نوفر لك أفضل تجربة حجز فنادق مع خدمة عملاء استثنائية وأسعار منافسة لا مثيل لها'
+                  : 'We provide you with the best hotel booking experience with exceptional customer service and unmatched competitive prices'}
+              </p>
+
+              <div className="space-y-4">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-green-500 text-white mt-1">
+                      <Check className="h-4 w-4" />
+                    </div>
+                    <p className="text-gray-700 text-lg">{benefit}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="relative h-[500px] overflow-hidden rounded-3xl shadow-2xl">
+                <Image
+                  src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=1000&fit=crop"
+                  alt="Luxury Hotel"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              {/* Floating Stats */}
+              <div className="absolute -bottom-6 -left-6 rounded-2xl bg-white p-6 shadow-xl">
+                <div className="text-4xl font-bold text-primary">500K+</div>
+                <div className="text-gray-600">{isArabic ? 'فندق متاح' : 'Hotels Available'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="section bg-gradient-to-br from-primary via-primary-dark to-secondary text-white">
+        <div className="container-custom text-center">
+          <h2 className="mb-6 text-4xl font-bold md:text-5xl">
+            {isArabic ? 'جاهز لحجز فندقك المثالي؟' : 'Ready to Book Your Perfect Hotel?'}
+          </h2>
+          <p className="mb-10 text-xl text-cyan-50 mx-auto max-w-2xl">
+            {isArabic
+              ? 'انضم إلى آلاف العملاء الراضين واستمتع بتجربة حجز استثنائية'
+              : 'Join thousands of satisfied customers and enjoy an exceptional booking experience'}
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href={`/${params.locale}/#hotels`}
+              className="group inline-flex items-center justify-center gap-3 rounded-xl bg-white px-10 py-5 text-lg font-semibold text-primary shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+            >
+              <Hotel className="h-6 w-6" />
+              <span>{isArabic ? 'ابحث عن فندق الآن' : 'Search Hotels Now'}</span>
+            </Link>
+
+            <Link
+              href={`/${params.locale}/contact`}
+              className="inline-flex items-center justify-center gap-3 rounded-xl border-2 border-white bg-transparent px-10 py-5 text-lg font-semibold text-white hover:bg-white hover:text-primary transition-all"
+            >
+              <span>{isArabic ? 'اتصل بنا' : 'Contact Us'}</span>
+            </Link>
           </div>
         </div>
       </section>

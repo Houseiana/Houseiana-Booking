@@ -14,8 +14,8 @@ export default function AboutPage({ params }: { params: { locale: Locale } }) {
           </h1>
           <p className="mx-auto max-w-2xl text-lg opacity-90">
             {isArabic
-              ? 'شريكك الموثوق للسفر منذ عام 2020'
-              : 'Your Trusted Travel Partner Since 2020'}
+              ? 'شريكك الموثوق للسفر منذ سبتمبر 2025'
+              : 'Your Trusted Travel Partner Since September 2025'}
           </p>
         </div>
       </section>
@@ -89,9 +89,8 @@ export default function AboutPage({ params }: { params: { locale: Locale } }) {
       {/* Stats */}
       <section className="section bg-primary-dark text-white">
         <div className="container-custom">
-          <div className="grid gap-8 md:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-3">
             {[
-              { number: '12,000+', label: isArabic ? 'مسافر سعيد' : 'Happy Travelers' },
               { number: '500+', label: isArabic ? 'شراكات فندقية' : 'Hotel Partners' },
               { number: '50+', label: isArabic ? 'الوجهات' : 'Destinations' },
               { number: '24/7', label: isArabic ? 'دعم العملاء' : 'Customer Support' },

@@ -248,7 +248,7 @@ export function CitySelector({ value, onChange, placeholder, locale, required = 
             </div>
           ) : (
             <div className="p-4 text-center text-gray-500">
-              {locale === 'ar' ? 'لا توجد مدن مطابقة' : 'No cities found'}
+              {locale === 'ar' ? 'غير موجود' : 'Not found'}
             </div>
           )}
         </div>

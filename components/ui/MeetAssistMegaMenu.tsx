@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Plane, Calendar, Clock, Users, Search } from 'lucide-react';
+import { Plane, Calendar, Clock, Users } from 'lucide-react';
 import { AirportSelector } from './AirportSelector';
-import { useRouter } from 'next/navigation';
+import { SuccessMessage } from './SuccessMessage';
 
 interface MeetAssistMegaMenuProps {
   locale: 'en' | 'ar';
@@ -11,16 +11,37 @@ interface MeetAssistMegaMenuProps {
 }
 
 export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps) {
-  const router = useRouter();
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+974');
   const [whatsapp, setWhatsapp] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [airport, setAirport] = useState('');
   const [serviceType, setServiceType] = useState('arrival');
   const [flightNumber, setFlightNumber] = useState('');
   const [flightDate, setFlightDate] = useState('');
   const [flightTime, setFlightTime] = useState('');
   const [travelers, setTravelers] = useState(1);
+
+  // Handle name input - only allow letters and spaces
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only letters (English and Arabic) and spaces
+    const regex = /^[a-zA-Z\u0600-\u06FF\s]*$/;
+    if (regex.test(value)) {
+      setName(value);
+    }
+  };
+
+  // Handle WhatsApp input - only allow numbers
+  const handleWhatsAppChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers
+    const regex = /^[0-9]*$/;
+    if (regex.test(value)) {
+      setWhatsapp(value);
+    }
+  };
 
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
@@ -38,6 +59,8 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
     flightTime: locale === 'ar' ? 'وقت الرحلة' : 'Flight Time',
     travelers: locale === 'ar' ? 'عدد المسافرين' : 'Number of Travelers',
     searchService: locale === 'ar' ? 'حجز الخدمة' : 'Book Service',
+    submitRequest: locale === 'ar' ? 'إرسال الطلب' : 'Submit Request',
+    submitting: locale === 'ar' ? 'جاري الإرسال...' : 'Submitting...',
     flightPlaceholder: locale === 'ar' ? 'مثال: QR123' : 'e.g. QR123',
   };
 
@@ -62,27 +85,58 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
     { code: '+34', country: 'Spain', flag: '🇪🇸' },
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate to meet-assist page with search params
-    const fullWhatsapp = `${countryCode}${whatsapp}`;
-    const params = new URLSearchParams({
-      name,
-      whatsapp: fullWhatsapp,
-      airport,
-      serviceType,
-      flightNumber,
-      flightDate,
-      flightTime,
-      travelers: travelers.toString(),
-    });
-    router.push(`/${locale}/services/meet-assist?${params.toString()}`);
-    onClose?.();
+
+    // Validate required fields
+    if (!name || !whatsapp || !airport || !flightNumber || !flightDate || !flightTime) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/send-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'meetAssist',
+          name,
+          whatsapp: `${countryCode}${whatsapp}`,
+          airport,
+          serviceType: serviceType === 'arrival' ? t.arrival : t.departure,
+          flightNumber,
+          flightDate,
+          flightTime,
+          travelers,
+        }),
+      });
+
+      if (response.ok) {
+        setShowSuccess(true);
+        // Reset form
+        setName('');
+        setWhatsapp('');
+        setAirport('');
+        setServiceType('arrival');
+        setFlightNumber('');
+        setFlightDate('');
+        setFlightTime('');
+        setTravelers(1);
+      } else {
+        alert(locale === 'ar' ? 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.' : 'Failed to submit. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert(locale === 'ar' ? 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.' : 'Failed to submit. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="w-full max-w-4xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-2xl border border-gray-100">
-      <form onSubmit={handleSearch} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="mb-6 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">{t.serviceSearch}</h3>
           <p className="text-sm text-gray-600">
@@ -95,11 +149,12 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
           <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">1</span>
             {t.fullName}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleNameChange}
             className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
             placeholder={locale === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
             required
@@ -111,6 +166,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
           <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">2</span>
             {t.whatsapp}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <div className="flex gap-2">
             <select
@@ -127,7 +183,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
             <input
               type="tel"
               value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
+              onChange={handleWhatsAppChange}
               placeholder="30424433"
               className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
               required
@@ -141,6 +197,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">3</span>
             <Plane size={16} className="text-primary" />
             {t.airport}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <AirportSelector
             value={airport}
@@ -187,6 +244,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
           <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
             {t.flightNumber}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <input
             type="text"
@@ -205,6 +263,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
               <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">6</span>
               <Calendar size={16} className="text-primary" />
               {t.flightDate}
+              <span className="text-red-600 ml-1">*</span>
             </label>
             <input
               type="date"
@@ -220,6 +279,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
               <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">7</span>
               <Clock size={16} className="text-primary" />
               {t.flightTime}
+              <span className="text-red-600 ml-1">*</span>
             </label>
             <input
               type="time"
@@ -252,12 +312,23 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
         {/* Submit Button */}
         <button
           type="submit"
-          className="btn-primary flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200"
+          disabled={isSubmitting}
+          className="btn-primary flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Search size={22} />
-          {t.searchService}
+          {isSubmitting ? t.submitting : t.submitRequest}
         </button>
       </form>
+
+      {/* Success Message */}
+      {showSuccess && (
+        <SuccessMessage
+          locale={locale}
+          onClose={() => {
+            setShowSuccess(false);
+            onClose?.();
+          }}
+        />
+      )}
     </div>
   );
 }

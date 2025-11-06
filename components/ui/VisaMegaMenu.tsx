@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { MapPin, Users, Zap, Search } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { MapPin } from 'lucide-react';
+import { SuccessMessage } from './SuccessMessage';
 
 interface VisaMegaMenuProps {
   locale: 'en' | 'ar';
@@ -10,32 +10,44 @@ interface VisaMegaMenuProps {
 }
 
 export function VisaMegaMenu({ locale, onClose }: VisaMegaMenuProps) {
-  const router = useRouter();
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+974');
   const [whatsapp, setWhatsapp] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [destinationCountry, setDestinationCountry] = useState('');
-  const [nationality, setNationality] = useState('');
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
-  const [processingSpeed, setProcessingSpeed] = useState('standard');
+  const [message, setMessage] = useState('');
+
+  // Handle name input - only allow letters and spaces
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only letters (English and Arabic) and spaces
+    const regex = /^[a-zA-Z\u0600-\u06FF\s]*$/;
+    if (regex.test(value)) {
+      setName(value);
+    }
+  };
+
+  // Handle WhatsApp input - only allow numbers
+  const handleWhatsAppChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers
+    const regex = /^[0-9]*$/;
+    if (regex.test(value)) {
+      setWhatsapp(value);
+    }
+  };
 
   const t = {
     visaSearch: locale === 'ar' ? 'طلب التأشيرة' : 'Visa Application',
     fullName: locale === 'ar' ? 'الاسم الكامل' : 'Full Name',
     whatsapp: locale === 'ar' ? 'رقم واتساب' : 'WhatsApp Number',
     destinationCountry: locale === 'ar' ? 'الدولة المقصد' : 'Destination Country',
-    nationality: locale === 'ar' ? 'الجنسية' : 'Nationality',
-    applicants: locale === 'ar' ? 'المتقدمين' : 'Applicants',
-    adults: locale === 'ar' ? 'البالغين' : 'Adults',
-    childrenUnder12: locale === 'ar' ? 'الأطفال (أقل من 12)' : 'Children (under 12)',
-    processingSpeed: locale === 'ar' ? 'سرعة المعالجة' : 'Processing Speed',
-    standard: locale === 'ar' ? 'عادي (5-7 أيام)' : 'Standard (5-7 days)',
-    expedited: locale === 'ar' ? 'سريع (2-3 أيام)' : 'Expedited (2-3 days)',
-    urgent: locale === 'ar' ? 'عاجل (24 ساعة)' : 'Urgent (24 hours)',
-    checkVisa: locale === 'ar' ? 'التحقق من متطلبات التأشيرة' : 'Check Visa Requirements',
+    message: locale === 'ar' ? 'رسالتك (التفاصيل)' : 'Your Message (Details)',
+    messagePlaceholder: locale === 'ar' ? 'أخبرنا عن متطلبات التأشيرة الخاصة بك...' : 'Tell us about your visa requirements...',
+    submitRequest: locale === 'ar' ? 'إرسال الطلب' : 'Submit Request',
+    submitting: locale === 'ar' ? 'جاري الإرسال...' : 'Submitting...',
     selectCountry: locale === 'ar' ? 'اختر الدولة' : 'Select Country',
-    selectNationality: locale === 'ar' ? 'اختر الجنسية' : 'Select Nationality',
   };
 
   const countryCodes = [
@@ -74,26 +86,50 @@ export function VisaMegaMenu({ locale, onClose }: VisaMegaMenuProps) {
     { code: 'TR', name: locale === 'ar' ? 'تركيا' : 'Turkey' },
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate to visa page with search params
-    const fullWhatsapp = `${countryCode}${whatsapp}`;
-    const params = new URLSearchParams({
-      name,
-      whatsapp: fullWhatsapp,
-      destination: destinationCountry,
-      nationality,
-      adults: adults.toString(),
-      children: children.toString(),
-      processing: processingSpeed,
-    });
-    router.push(`/${locale}/visa?${params.toString()}`);
-    onClose?.();
+
+    // Validate required fields
+    if (!name || !whatsapp || !destinationCountry || !message) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/send-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'visa',
+          name,
+          whatsapp: `${countryCode}${whatsapp}`,
+          country: destinationCountry,
+          message,
+        }),
+      });
+
+      if (response.ok) {
+        setShowSuccess(true);
+        // Reset form
+        setName('');
+        setWhatsapp('');
+        setDestinationCountry('');
+        setMessage('');
+      } else {
+        alert(locale === 'ar' ? 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.' : 'Failed to submit. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert(locale === 'ar' ? 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.' : 'Failed to submit. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="w-full max-w-4xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-2xl border border-gray-100">
-      <form onSubmit={handleSearch} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="mb-6 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">{t.visaSearch}</h3>
           <p className="text-sm text-gray-600">
@@ -106,11 +142,12 @@ export function VisaMegaMenu({ locale, onClose }: VisaMegaMenuProps) {
           <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">1</span>
             {t.fullName}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleNameChange}
             className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
             placeholder={locale === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
             required
@@ -122,6 +159,7 @@ export function VisaMegaMenu({ locale, onClose }: VisaMegaMenuProps) {
           <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">2</span>
             {t.whatsapp}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <div className="flex gap-2">
             <select
@@ -138,7 +176,7 @@ export function VisaMegaMenu({ locale, onClose }: VisaMegaMenuProps) {
             <input
               type="tel"
               value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
+              onChange={handleWhatsAppChange}
               placeholder="30424433"
               className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
               required
@@ -152,6 +190,7 @@ export function VisaMegaMenu({ locale, onClose }: VisaMegaMenuProps) {
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">3</span>
             <MapPin size={16} className="text-primary" />
             {t.destinationCountry}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <select
             value={destinationCountry}
@@ -161,149 +200,50 @@ export function VisaMegaMenu({ locale, onClose }: VisaMegaMenuProps) {
           >
             <option value="">{t.selectCountry}</option>
             {popularCountries.map((country) => (
-              <option key={country.code} value={country.code}>
+              <option key={country.code} value={country.name}>
                 {country.name}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Nationality */}
+        {/* Message */}
         <div className="relative group">
-          <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
+          <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">4</span>
-            <MapPin size={16} className="text-primary" />
-            {t.nationality}
+            {t.message}
+            <span className="text-red-600 ml-1">*</span>
           </label>
-          <select
-            value={nationality}
-            onChange={(e) => setNationality(e.target.value)}
-            className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em] bg-[right_0.5rem_center] bg-no-repeat pr-10"
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={5}
+            className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400 resize-none"
+            placeholder={t.messagePlaceholder}
             required
-          >
-            <option value="">{t.selectNationality}</option>
-            {popularCountries.map((country) => (
-              <option key={country.code} value={country.code}>
-                {country.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Applicants */}
-        <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl p-5 border border-primary/10">
-          <label className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
-            <Users size={18} className="text-primary" />
-            {t.applicants}
-          </label>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="relative group">
-              <label className="mb-2 block text-xs font-semibold text-gray-600 uppercase tracking-wide">{t.adults}</label>
-              <input
-                type="number"
-                value={adults}
-                onChange={(e) => setAdults(Math.max(1, parseInt(e.target.value) || 1))}
-                min="1"
-                max="10"
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md text-center text-lg font-semibold"
-                required
-              />
-            </div>
-            <div className="relative group">
-              <label className="mb-2 block text-xs font-semibold text-gray-600 uppercase tracking-wide">{t.childrenUnder12}</label>
-              <input
-                type="number"
-                value={children}
-                onChange={(e) => setChildren(Math.max(0, parseInt(e.target.value) || 0))}
-                min="0"
-                max="10"
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md text-center text-lg font-semibold"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Processing Speed */}
-        <div>
-          <label className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">6</span>
-            <Zap size={18} className="text-primary" />
-            {t.processingSpeed}
-          </label>
-          <div className="space-y-3">
-            <label className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all duration-200 shadow-sm hover:shadow-md ${
-              processingSpeed === 'standard'
-                ? 'border-primary bg-gradient-to-r from-primary/10 to-primary/5 ring-2 ring-primary/20'
-                : 'border-gray-200 hover:border-gray-300 bg-white'
-            }`}>
-              <input
-                type="radio"
-                name="processing"
-                value="standard"
-                checked={processingSpeed === 'standard'}
-                onChange={(e) => setProcessingSpeed(e.target.value)}
-                className="h-5 w-5 text-primary focus:ring-2 focus:ring-primary"
-              />
-              <span className="font-semibold flex-1">{t.standard}</span>
-              {processingSpeed === 'standard' && (
-                <svg className="h-5 w-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              )}
-            </label>
-            <label className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all duration-200 shadow-sm hover:shadow-md ${
-              processingSpeed === 'expedited'
-                ? 'border-primary bg-gradient-to-r from-primary/10 to-primary/5 ring-2 ring-primary/20'
-                : 'border-gray-200 hover:border-gray-300 bg-white'
-            }`}>
-              <input
-                type="radio"
-                name="processing"
-                value="expedited"
-                checked={processingSpeed === 'expedited'}
-                onChange={(e) => setProcessingSpeed(e.target.value)}
-                className="h-5 w-5 text-primary focus:ring-2 focus:ring-primary"
-              />
-              <span className="font-semibold flex-1">{t.expedited}</span>
-              {processingSpeed === 'expedited' && (
-                <svg className="h-5 w-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              )}
-            </label>
-            <label className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all duration-200 shadow-sm hover:shadow-md ${
-              processingSpeed === 'urgent'
-                ? 'border-primary bg-gradient-to-r from-primary/10 to-primary/5 ring-2 ring-primary/20'
-                : 'border-gray-200 hover:border-gray-300 bg-white'
-            }`}>
-              <input
-                type="radio"
-                name="processing"
-                value="urgent"
-                checked={processingSpeed === 'urgent'}
-                onChange={(e) => setProcessingSpeed(e.target.value)}
-                className="h-5 w-5 text-primary focus:ring-2 focus:ring-primary"
-              />
-              <span className="font-semibold flex-1">{t.urgent}</span>
-              {processingSpeed === 'urgent' && (
-                <svg className="h-5 w-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              )}
-            </label>
-          </div>
+          />
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="btn-primary flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200"
+          disabled={isSubmitting}
+          className="btn-primary flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Search size={22} />
-          {t.checkVisa}
+          {isSubmitting ? t.submitting : t.submitRequest}
         </button>
       </form>
+
+      {/* Success Message */}
+      {showSuccess && (
+        <SuccessMessage
+          locale={locale}
+          onClose={() => {
+            setShowSuccess(false);
+            onClose?.();
+          }}
+        />
+      )}
     </div>
   );
 }

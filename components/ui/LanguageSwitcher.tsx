@@ -61,6 +61,7 @@ export function LanguageSwitcher({ currentLocale, onLocaleChange }: LanguageSwit
               onClick={() => handleLocaleChange(locale as Locale)}
               className={cn(
                 'block w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-100',
+                locale === 'ar' ? 'text-black' : 'text-gray-700',
                 currentLocale === locale && 'bg-primary-light font-semibold text-primary'
               )}
               role="menuitem"
