@@ -83,7 +83,7 @@ export default function LoungePage({ params }: { params: { locale: Locale } }) {
                   <optgroup label="North America">
                     <option value="JFK-DELTA">JFK - New York Kennedy - Delta Sky Club</option>
                     <option value="LAX-UNITED">LAX - Los Angeles International - United Club</option>
-                    <option value="ORD-ADMIRALS">ORD - Chicago O'Hare - Admirals Club</option>
+                    <option value="ORD-ADMIRALS">ORD - Chicago O&apos;Hare - Admirals Club</option>
                   </optgroup>
                 </select>
               </div>

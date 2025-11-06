@@ -6,7 +6,7 @@ import { HeroSection } from '@/components/sections/HeroSection';
 import { FeaturedDestinations } from '@/components/sections/FeaturedDestinations';
 import { WhyUsSection } from '@/components/sections/WhyUsSection';
 import { SpecialOffers } from '@/components/sections/SpecialOffers';
-import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
 
 export default function HomePage({ params }: { params: { locale: Locale } }) {
   const translations = getTranslations(params.locale);
@@ -89,23 +89,18 @@ export default function HomePage({ params }: { params: { locale: Locale } }) {
               : 'Join thousands of happy travelers and book your next trip with us'}
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button
-              as="a"
+            <Link
               href={`/${params.locale}/hotels`}
-              variant="secondary"
-              size="lg"
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-lg font-medium transition-all duration-200 bg-secondary text-white hover:bg-secondary-dark shadow-md hover:shadow-lg"
             >
               {params.locale === 'ar' ? 'تصفح الفنادق' : 'Browse Hotels'}
-            </Button>
-            <Button
-              as="a"
+            </Link>
+            <Link
               href={`/${params.locale}/contact`}
-              variant="ghost"
-              size="lg"
-              className="text-white hover:bg-white/10"
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-lg font-medium transition-all duration-200 text-white hover:bg-white/10 border-2 border-white"
             >
               {params.locale === 'ar' ? 'اتصل بنا' : 'Contact Us'}
-            </Button>
+            </Link>
           </div>
         </div>
       </section>
