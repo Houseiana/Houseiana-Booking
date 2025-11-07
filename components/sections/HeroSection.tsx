@@ -39,9 +39,10 @@ export function HeroSection({ translations, locale = 'en' }: HeroSectionProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const heroImages = [
-    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&h=1080&fit=crop&q=80', // Luxury hotel
-    'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1920&h=1080&fit=crop&q=80', // Airplane
-    'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&h=1080&fit=crop&q=80', // Travel destination
+    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1920&h=1080&fit=crop&q=90', // Luxury hotel lobby with chandelier
+    'https://images.unsplash.com/photo-1540206395-68808572332f?w=1920&h=1080&fit=crop&q=90', // Business class cabin
+    'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1920&h=1080&fit=crop&q=90', // VIP airport lounge
+    'https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=1920&h=1080&fit=crop&q=90', // Luxury resort pool
   ];
 
   useEffect(() => {
