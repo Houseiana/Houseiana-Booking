@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Plane, Calendar, Clock, Users } from 'lucide-react';
 import { AirportSelector } from './AirportSelector';
 import { SuccessMessage } from './SuccessMessage';
+import { countryCodes } from '@/lib/data/countryCodes';
 
 interface MeetAssistMegaMenuProps {
   locale: 'en' | 'ar';
@@ -64,26 +65,6 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
     flightPlaceholder: locale === 'ar' ? 'مثال: QR123' : 'e.g. QR123',
   };
 
-  const countryCodes = [
-    { code: '+974', country: 'Qatar', flag: '🇶🇦' },
-    { code: '+971', country: 'UAE', flag: '🇦🇪' },
-    { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
-    { code: '+965', country: 'Kuwait', flag: '🇰🇼' },
-    { code: '+968', country: 'Oman', flag: '🇴🇲' },
-    { code: '+973', country: 'Bahrain', flag: '🇧🇭' },
-    { code: '+1', country: 'USA/Canada', flag: '🇺🇸' },
-    { code: '+44', country: 'UK', flag: '🇬🇧' },
-    { code: '+91', country: 'India', flag: '🇮🇳' },
-    { code: '+92', country: 'Pakistan', flag: '🇵🇰' },
-    { code: '+20', country: 'Egypt', flag: '🇪🇬' },
-    { code: '+962', country: 'Jordan', flag: '🇯🇴' },
-    { code: '+961', country: 'Lebanon', flag: '🇱🇧' },
-    { code: '+90', country: 'Turkey', flag: '🇹🇷' },
-    { code: '+49', country: 'Germany', flag: '🇩🇪' },
-    { code: '+33', country: 'France', flag: '🇫🇷' },
-    { code: '+39', country: 'Italy', flag: '🇮🇹' },
-    { code: '+34', country: 'Spain', flag: '🇪🇸' },
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

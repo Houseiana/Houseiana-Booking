@@ -5,6 +5,7 @@ import { Calendar } from 'lucide-react';
 import { RoomGuestPicker } from './RoomGuestPicker';
 import { CitySelector } from './CitySelector';
 import { SuccessMessage } from './SuccessMessage';
+import { countryCodes } from '@/lib/data/countryCodes';
 
 interface HotelMegaMenuProps {
   locale: 'en' | 'ar';
@@ -62,28 +63,6 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
     submitRequest: locale === 'ar' ? 'إرسال الطلب' : 'Submit Request',
     submitting: locale === 'ar' ? 'جاري الإرسال...' : 'Submitting...',
   };
-
-
-  const countryCodes = [
-    { code: '+974', country: 'Qatar', flag: '🇶🇦' },
-    { code: '+971', country: 'UAE', flag: '🇦🇪' },
-    { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
-    { code: '+965', country: 'Kuwait', flag: '🇰🇼' },
-    { code: '+968', country: 'Oman', flag: '🇴🇲' },
-    { code: '+973', country: 'Bahrain', flag: '🇧🇭' },
-    { code: '+1', country: 'USA/Canada', flag: '🇺🇸' },
-    { code: '+44', country: 'UK', flag: '🇬🇧' },
-    { code: '+91', country: 'India', flag: '🇮🇳' },
-    { code: '+92', country: 'Pakistan', flag: '🇵🇰' },
-    { code: '+20', country: 'Egypt', flag: '🇪🇬' },
-    { code: '+962', country: 'Jordan', flag: '🇯🇴' },
-    { code: '+961', country: 'Lebanon', flag: '🇱🇧' },
-    { code: '+90', country: 'Turkey', flag: '🇹🇷' },
-    { code: '+49', country: 'Germany', flag: '🇩🇪' },
-    { code: '+33', country: 'France', flag: '🇫🇷' },
-    { code: '+39', country: 'Italy', flag: '🇮🇹' },
-    { code: '+34', country: 'Spain', flag: '🇪🇸' },
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
