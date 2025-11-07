@@ -16,9 +16,6 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
   const [countryCode, setCountryCode] = useState('+974');
   const [whatsapp, setWhatsapp] = useState('');
   const [destination, setDestination] = useState('');
-  const [hotelType, setHotelType] = useState('');
-  const [location, setLocation] = useState('');
-  const [amenities, setAmenities] = useState<string[]>([]);
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [rooms, setRooms] = useState([{ adults: 2, children: 0 }]);
@@ -59,10 +56,6 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
     whatsapp: locale === 'ar' ? 'رقم واتساب' : 'WhatsApp Number',
     destination: locale === 'ar' ? 'الوجهة' : 'Destination',
     destinationPlaceholder: locale === 'ar' ? 'مدينة، فندق، أو معلم' : 'City, hotel, or landmark',
-    hotelType: locale === 'ar' ? 'نوع الفندق' : 'Hotel Type',
-    location: locale === 'ar' ? 'الموقع' : 'Location',
-    amenities: locale === 'ar' ? 'المرافق' : 'Amenities',
-    amenitiesOptional: locale === 'ar' ? '(اختياري)' : '(Optional)',
     checkIn: locale === 'ar' ? 'تسجيل الوصول' : 'Check-in',
     checkOut: locale === 'ar' ? 'تسجيل المغادرة' : 'Check-out',
     roomsGuests: locale === 'ar' ? 'الغرف والضيوف' : 'Rooms & Guests',
@@ -70,46 +63,6 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
     submitting: locale === 'ar' ? 'جاري الإرسال...' : 'Submitting...',
   };
 
-  const locations = [
-    { value: '', label: locale === 'ar' ? 'أي موقع' : 'Any Location', emoji: '' },
-    { value: 'downtown', label: locale === 'ar' ? 'وسط المدينة' : 'Downtown', emoji: '🏙️' },
-    { value: 'airport', label: locale === 'ar' ? 'بالقرب من المطار' : 'Near Airport', emoji: '✈️' },
-    { value: 'metro', label: locale === 'ar' ? 'بجانب محطة المترو' : 'Next to Metro Hub', emoji: '🚇' },
-    { value: 'foodStreet', label: locale === 'ar' ? 'مقابل شارع الطعام' : 'Across from Food Street', emoji: '🍽️' },
-    { value: 'historic', label: locale === 'ar' ? 'الحي التاريخي' : 'Historic Quarter', emoji: '🏛️' },
-    { value: 'nationalPark', label: locale === 'ar' ? 'بوابة المتنزه الوطني' : 'National Park Gateway', emoji: '🌳' },
-    { value: 'cruisePort', label: locale === 'ar' ? 'قريب من ميناء الرحلات البحرية' : 'Close to Cruise Port', emoji: '⛴️' },
-  ];
-
-  const amenitiesList = [
-    { value: 'breakfast', label: locale === 'ar' ? 'إفطار مجاني' : 'Free Breakfast', emoji: '🍳' },
-    { value: 'petFriendly', label: locale === 'ar' ? 'صديق للحيوانات' : 'Pet-Friendly', emoji: '🐾' },
-    { value: 'smokeFree', label: locale === 'ar' ? 'خالٍ من التدخين' : 'Smoke-Free', emoji: '🚭' },
-    { value: 'pool', label: locale === 'ar' ? 'مسبح' : 'Pool', emoji: '🏊' },
-    { value: 'evCharging', label: locale === 'ar' ? 'شحن السيارات الكهربائية' : 'EV Charging', emoji: '🔌' },
-    { value: 'airportShuttle', label: locale === 'ar' ? 'خدمة نقل المطار' : 'Airport Shuttle', emoji: '🚐' },
-    { value: 'wifi', label: locale === 'ar' ? 'واي فاي عالي السرعة' : 'High-Speed WiFi', emoji: '📶' },
-    { value: 'golfCourse', label: locale === 'ar' ? 'ملعب جولف' : 'Golf Course', emoji: '⛳' },
-    { value: 'privateBeach', label: locale === 'ar' ? 'شاطئ خاص' : 'Private Beach', emoji: '🏖️' },
-  ];
-
-  const toggleAmenity = (value: string) => {
-    setAmenities((prev) =>
-      prev.includes(value) ? prev.filter((a) => a !== value) : [...prev, value]
-    );
-  };
-
-  const hotelTypes = [
-    { value: '', label: locale === 'ar' ? 'أي نوع' : 'Any Type', emoji: '' },
-    { value: 'business', label: locale === 'ar' ? 'سفر الأعمال' : 'Business Travel', emoji: '🏢' },
-    { value: 'beach', label: locale === 'ar' ? 'منتجع شاطئي' : 'Beach Resort', emoji: '🏖️' },
-    { value: 'boutique', label: locale === 'ar' ? 'فندق فني بوتيك' : 'Boutique Art Hotel', emoji: '🎨' },
-    { value: 'budget', label: locale === 'ar' ? 'إقامة اقتصادية' : 'Budget Smart Stays', emoji: '🧳' },
-    { value: 'ski', label: locale === 'ar' ? 'منتجع تزلج' : 'Ski-In/Ski-Out Lodge', emoji: '🎿' },
-    { value: 'historic', label: locale === 'ar' ? 'فندق تاريخي' : 'Historic Landmark Hotel', emoji: '🏰' },
-    { value: 'airport', label: locale === 'ar' ? 'فندق المطار' : 'Airport Transit Hotel', emoji: '✈️' },
-    { value: 'luxury', label: locale === 'ar' ? 'منتجع فاخر' : 'Luxury Resort', emoji: '🍹' },
-  ];
 
   const countryCodes = [
     { code: '+974', country: 'Qatar', flag: '🇶🇦' },
@@ -150,9 +103,6 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
           name,
           whatsapp: `${countryCode}${whatsapp}`,
           destination,
-          hotelType: hotelType || 'Any Type',
-          location: location || 'Any Location',
-          amenities: amenities.length > 0 ? amenities.join(', ') : 'None',
           checkIn,
           checkOut,
           rooms: JSON.stringify(rooms),
@@ -165,9 +115,6 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
         setName('');
         setWhatsapp('');
         setDestination('');
-        setHotelType('');
-        setLocation('');
-        setAmenities([]);
         setCheckIn('');
         setCheckOut('');
         setRooms([{ adults: 2, children: 0 }]);
@@ -183,8 +130,8 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
   };
 
   return (
-    <div className="w-full max-w-4xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-2xl border border-gray-100">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-full max-w-4xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 md:p-8 shadow-2xl border border-gray-100">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div className="mb-6 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">{t.hotelSearch}</h3>
           <p className="text-sm text-gray-600">
@@ -203,7 +150,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
             type="text"
             value={name}
             onChange={handleNameChange}
-            className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
+            className="w-full px-4 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
             placeholder={locale === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
             required
           />
@@ -220,7 +167,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
             <select
               value={countryCode}
               onChange={(e) => setCountryCode(e.target.value)}
-              className="w-32 px-3 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em] bg-[right_0.3rem_center] bg-no-repeat pr-8"
+              className="w-24 sm:w-32 px-2 sm:px-3 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em] bg-[right_0.2rem_center] sm:bg-[right_0.3rem_center] bg-no-repeat pr-6 sm:pr-8"
             >
               {countryCodes.map((country) => (
                 <option key={country.code} value={country.code}>
@@ -233,7 +180,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
               value={whatsapp}
               onChange={handleWhatsAppChange}
               placeholder="30424433"
-              className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
+              className="flex-1 px-4 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
               required
             />
           </div>
@@ -255,75 +202,11 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
             />
           </div>
 
-          {/* Hotel Type */}
-          <div className="relative group">
-            <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">4</span>
-              {t.hotelType}
-            </label>
-            <select
-              value={hotelType}
-              onChange={(e) => setHotelType(e.target.value)}
-              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em] bg-[right_0.5rem_center] bg-no-repeat pr-10"
-            >
-              {hotelTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.emoji} {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Location */}
-          <div className="relative group">
-            <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
-              {t.location}
-            </label>
-            <select
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em] bg-[right_0.5rem_center] bg-no-repeat pr-10"
-            >
-              {locations.map((loc) => (
-                <option key={loc.value} value={loc.value}>
-                  {loc.emoji} {loc.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Amenities */}
-          <div className="relative group">
-            <label className="mb-2 block text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">6</span>
-              {t.amenities}
-              <span className="text-gray-500 text-xs ml-1">{t.amenitiesOptional}</span>
-            </label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {amenitiesList.map((amenity) => (
-                <button
-                  key={amenity.value}
-                  type="button"
-                  onClick={() => toggleAmenity(amenity.value)}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all duration-200 ${
-                    amenities.includes(amenity.value)
-                      ? 'border-primary bg-gradient-to-r from-primary/10 to-primary/5 text-primary ring-2 ring-primary/20'
-                      : 'border-gray-200 text-gray-700 hover:border-gray-300 bg-white hover:shadow-sm'
-                  }`}
-                >
-                  <span className="text-lg">{amenity.emoji}</span>
-                  <span className="text-xs">{amenity.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Check-in and Check-out */}
           <div className="grid gap-4 md:grid-cols-2">
             <div className="relative group">
               <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">7</span>
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">4</span>
                 <Calendar size={16} className="text-primary" />
                 {t.checkIn}
                 <span className="text-red-600 ml-1">*</span>
@@ -333,13 +216,13 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
                 value={checkIn}
                 onChange={(e) => setCheckIn(e.target.value)}
                 min={today}
-                className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+                className="w-full px-4 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 required
               />
             </div>
             <div className="relative group">
               <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">8</span>
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
                 <Calendar size={16} className="text-primary" />
                 {t.checkOut}
                 <span className="text-red-600 ml-1">*</span>
@@ -349,7 +232,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
                 min={minCheckOut}
-                className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+                className="w-full px-4 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 required
               />
             </div>
@@ -358,7 +241,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
           {/* Rooms & Guests Picker */}
           <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl p-5 border border-primary/10">
             <label className="mb-3 block text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">9</span>
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">6</span>
               {t.roomsGuests}
             </label>
             <RoomGuestPicker value={rooms} onChange={setRooms} locale={locale} />
@@ -368,7 +251,7 @@ export function HotelMegaMenu({ locale, onClose }: HotelMegaMenuProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-primary flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary flex w-full items-center justify-center gap-3 py-4 min-h-[48px] text-base sm:text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? t.submitting : t.submitRequest}
         </button>

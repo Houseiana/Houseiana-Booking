@@ -135,8 +135,8 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
   };
 
   return (
-    <div className="w-full max-w-4xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-2xl border border-gray-100">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-full max-w-4xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 md:p-8 shadow-2xl border border-gray-100">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div className="mb-6 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">{t.serviceSearch}</h3>
           <p className="text-sm text-gray-600">
@@ -155,7 +155,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
             type="text"
             value={name}
             onChange={handleNameChange}
-            className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
+            className="w-full px-4 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
             placeholder={locale === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
             required
           />
@@ -172,7 +172,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
             <select
               value={countryCode}
               onChange={(e) => setCountryCode(e.target.value)}
-              className="w-32 px-3 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em] bg-[right_0.3rem_center] bg-no-repeat pr-8"
+              className="w-24 sm:w-32 px-2 sm:px-3 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em] bg-[right_0.2rem_center] sm:bg-[right_0.3rem_center] bg-no-repeat pr-6 sm:pr-8"
             >
               {countryCodes.map((country) => (
                 <option key={country.code} value={country.code}>
@@ -185,7 +185,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
               value={whatsapp}
               onChange={handleWhatsAppChange}
               placeholder="30424433"
-              className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
+              className="flex-1 px-4 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400"
               required
             />
           </div>
@@ -270,7 +270,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
               value={flightDate}
               onChange={(e) => setFlightDate(e.target.value)}
               min={today}
-              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+              className="w-full px-4 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               required
             />
           </div>
@@ -285,7 +285,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
               type="time"
               value={flightTime}
               onChange={(e) => setFlightTime(e.target.value)}
-              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+              className="w-full px-4 py-3.5 min-h-[44px] text-base rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-datetime-edit]:py-0"
               required
             />
           </div>
@@ -313,7 +313,7 @@ export function MeetAssistMegaMenu({ locale, onClose }: MeetAssistMegaMenuProps)
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-primary flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary flex w-full items-center justify-center gap-3 py-4 min-h-[48px] text-base sm:text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? t.submitting : t.submitRequest}
         </button>

@@ -30,7 +30,6 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [flightType, setFlightType] = useState('roundTrip');
-  const [priorities, setPriorities] = useState<string[]>([]);
   const [multiCityLegs, setMultiCityLegs] = useState<FlightLeg[]>([
     { from: '', to: '', date: '' },
     { from: '', to: '', date: '' },
@@ -83,10 +82,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
     searchFlights: locale === 'ar' ? 'البحث عن الرحلات' : 'Search Flights',
     submitRequest: locale === 'ar' ? 'إرسال الطلب' : 'Submit Request',
     submitting: locale === 'ar' ? 'جاري الإرسال...' : 'Submitting...',
-    optional: locale === 'ar' ? '(اختياري)' : '(Optional)',
     flightType: locale === 'ar' ? 'نوع الرحلة' : 'Flight Type',
-    priorities: locale === 'ar' ? 'الأولويات' : 'Priorities',
-    prioritiesOptional: locale === 'ar' ? '(اختياري)' : '(Optional)',
     addFlight: locale === 'ar' ? 'إضافة رحلة أخرى' : 'Add Another Flight',
     removeFlight: locale === 'ar' ? 'إزالة الرحلة' : 'Remove Flight',
     flight: locale === 'ar' ? 'رحلة' : 'Flight',
@@ -101,12 +97,6 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
     { value: 'multiDestination', label: locale === 'ar' ? 'متعدد الوجهات' : 'Multi-Destination Travel', emoji: '🌍' },
   ];
 
-  const prioritiesList = [
-    { value: 'budget', label: locale === 'ar' ? 'الميزانية أولاً' : 'Budget First', emoji: '💰' },
-    { value: 'shortest', label: locale === 'ar' ? 'أقصر مدة' : 'Shortest Duration', emoji: '⚡' },
-    { value: 'businessClass', label: locale === 'ar' ? 'درجة الأعمال' : 'Business Class', emoji: '💼' },
-    { value: 'nonRedEye', label: locale === 'ar' ? 'بدون رحلات ليلية' : 'Non-Red Eye', emoji: '☀️' },
-  ];
 
   const countryCodes = [
     { code: '+974', country: 'Qatar', flag: '🇶🇦' },
@@ -129,11 +119,6 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
     { code: '+34', country: 'Spain', flag: '🇪🇸' },
   ];
 
-  const togglePriority = (value: string) => {
-    setPriorities((prev) =>
-      prev.includes(value) ? prev.filter((p) => p !== value) : [...prev, value]
-    );
-  };
 
   const addMultiCityLeg = () => {
     if (multiCityLegs.length < 5) {
@@ -190,7 +175,6 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
           name,
           whatsapp: `${countryCode}${whatsapp}`,
           flightType: flightTypes.find(ft => ft.value === flightType)?.label || flightType,
-          priorities: priorities.length > 0 ? priorities.map(p => prioritiesList.find(pr => pr.value === p)?.label).join(', ') : 'None',
           route: routeString,
           departureDate: flightType !== 'multiDestination' ? departureDate : undefined,
           returnDate: returnDate || undefined,
@@ -213,7 +197,6 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
         setAdults(1);
         setChildren(0);
         setFlightType('roundTrip');
-        setPriorities([]);
         setMultiCityLegs([
           { from: '', to: '', date: '' },
           { from: '', to: '', date: '' },
@@ -230,8 +213,8 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
   };
 
   return (
-    <div className="w-full max-w-5xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-6 shadow-2xl border border-gray-100 max-h-[85vh] overflow-y-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="w-full max-w-5xl rounded-2xl bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 shadow-2xl border border-gray-100 max-h-[85vh] overflow-y-auto">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         <div className="mb-4 text-center">
           <h3 className="text-xl font-bold text-gray-900 mb-1">{t.flightSearch}</h3>
           <p className="text-xs text-gray-600">
@@ -250,7 +233,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
             type="text"
             value={name}
             onChange={handleNameChange}
-            className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400 text-sm"
+            className="w-full px-3 py-2.5 min-h-[44px] rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400 text-base"
             placeholder={locale === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
             required
           />
@@ -267,7 +250,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
             <select
               value={countryCode}
               onChange={(e) => setCountryCode(e.target.value)}
-              className="w-28 px-2 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.2em] bg-[right_0.2rem_center] bg-no-repeat pr-6 text-sm"
+              className="w-24 sm:w-28 px-2 py-2.5 min-h-[44px] rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.2em] bg-[right_0.2rem_center] bg-no-repeat pr-6 text-base"
             >
               {countryCodes.map((country) => (
                 <option key={country.code} value={country.code}>
@@ -280,7 +263,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
               value={whatsapp}
               onChange={handleWhatsAppChange}
               placeholder="30424433"
-              className="flex-1 px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400 text-sm"
+              className="flex-1 px-3 py-2.5 min-h-[44px] rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md placeholder:text-gray-400 text-base"
               required
             />
           </div>
@@ -305,37 +288,11 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
           </select>
         </div>
 
-        {/* Priorities */}
-        <div className="relative group">
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700 flex items-center gap-2">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">4</span>
-            {t.priorities}
-            <span className="text-gray-500 text-[10px] ml-1">{t.prioritiesOptional}</span>
-          </label>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {prioritiesList.map((priority) => (
-              <button
-                key={priority.value}
-                type="button"
-                onClick={() => togglePriority(priority.value)}
-                className={`flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg border-2 text-sm font-medium transition-all duration-200 ${
-                  priorities.includes(priority.value)
-                    ? 'border-primary bg-gradient-to-r from-primary/10 to-primary/5 text-primary ring-2 ring-primary/20'
-                    : 'border-gray-200 text-gray-700 hover:border-gray-300 bg-white hover:shadow-sm'
-                }`}
-              >
-                <span className="text-base">{priority.emoji}</span>
-                <span className="text-[11px]">{priority.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Flight Routes */}
         {flightType === 'multiDestination' ? (
           <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl p-4 border border-primary/10 space-y-3">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">4</span>
               <Plane size={14} className="text-primary" />
               {locale === 'ar' ? 'مسار الرحلات' : 'Flight Routes'}
             </label>
@@ -403,7 +360,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
                     value={leg.date}
                     onChange={(e) => updateMultiCityLeg(index, 'date', e.target.value)}
                     min={today}
-                    className="w-full px-3 py-2 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white text-sm"
+                    className="w-full px-3 py-2 min-h-[44px] rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white text-base [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                     required
                   />
                 </div>
@@ -428,7 +385,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="relative group">
                   <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">4</span>
                     <Plane size={14} className="text-primary" />
                     {t.origin}
                     <span className="text-red-600 ml-1">*</span>
@@ -443,7 +400,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
 
                 <div className="relative group">
                   <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">6</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
                     <Plane size={14} className="rotate-90 text-primary" />
                     {t.destination}
                     <span className="text-red-600 ml-1">*</span>
@@ -465,7 +422,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
           <div className="grid gap-3 md:grid-cols-2">
             <div className="relative group">
               <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">7</span>
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">6</span>
                 <Calendar size={14} className="text-primary" />
                 {t.departureDate}
                 <span className="text-red-600 ml-1">*</span>
@@ -475,22 +432,23 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
                 value={departureDate}
                 onChange={(e) => setDepartureDate(e.target.value)}
                 min={today}
-                className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md text-sm"
+                className="w-full px-3 py-2.5 min-h-[44px] rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md text-base [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 required
               />
             </div>
             <div className="relative group">
               <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">8</span>
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">7</span>
                 <Calendar size={14} className="text-primary" />
-                {t.returnDate} <span className="text-gray-500 text-[10px] ml-1">{t.optional}</span>
+                {t.returnDate} <span className="text-red-600 ml-1">*</span>
               </label>
               <input
                 type="date"
                 value={returnDate}
                 onChange={(e) => setReturnDate(e.target.value)}
                 min={minReturn}
-                className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md text-sm"
+                className="w-full px-3 py-2.5 min-h-[44px] rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all duration-200 bg-white shadow-sm hover:shadow-md text-base [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                required
               />
             </div>
           </div>
@@ -499,7 +457,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
         {/* Cabin Class */}
         <div className="relative group">
           <label className="mb-1.5 block text-sm font-semibold text-gray-700 flex items-center gap-2">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">9</span>
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">8</span>
             {t.cabin}
           </label>
           <select
@@ -517,7 +475,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
         {/* Passengers */}
         <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl p-4 border border-primary/10">
           <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">10</span>
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold">9</span>
             <Users size={16} className="text-primary" />
             {t.passengers}
           </label>
@@ -552,7 +510,7 @@ export function FlightMegaMenu({ locale, onClose }: FlightMegaMenuProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-primary flex w-full items-center justify-center gap-2 py-3 text-base font-bold shadow-lg hover:shadow-xl transform hover:scale-[1.01] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary flex w-full items-center justify-center gap-2 py-3 min-h-[48px] text-base font-bold shadow-lg hover:shadow-xl transform hover:scale-[1.01] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? t.submitting : t.submitRequest}
         </button>

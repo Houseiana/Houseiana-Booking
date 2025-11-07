@@ -5,6 +5,7 @@ import { getTranslations } from '@/lib/i18n/translations';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { ServiceShowcase } from '@/components/sections/ServiceShowcase';
 import { WhyUsSection } from '@/components/sections/WhyUsSection';
+import { StructuredData } from '@/components/seo/StructuredData';
 import Link from 'next/link';
 
 export default function HomePage({ params }: { params: { locale: Locale } }) {
@@ -12,6 +13,9 @@ export default function HomePage({ params }: { params: { locale: Locale } }) {
 
   return (
     <>
+      {/* SEO: JSON-LD Structured Data */}
+      <StructuredData locale={params.locale} />
+
       <HeroSection translations={translations} locale={params.locale} />
       <ServiceShowcase locale={params.locale} />
       <WhyUsSection translations={translations} />
